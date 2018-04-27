@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="es.fpdual.eadmin.eadmin.mappers.DocumentoMapper">
+
+	<insert id="insertarDocumento">
+		INSERT INTO Elemento (
+		Codigo,
+		Nombre,
+		FechaCreacion,
+		FechaUltimaModificacion,
+		Publico,
+		Tipo,
+		EstadoDocumento)
+		VALUES (
+		#{Documento.codigo},
+		#{Documento.nombre},
+		#{Documento.fechaCreacion},
+		#{Documento.fechaUltimaActualizacion},
+		#{Documento.publico},
+		1,
+		#{Documento.estado.codigo})
+	</insert>
+	<delete id="borrarDocumento">
+		DELETE FROM Elemento where Codigo =
+		#{Documento.codigo}
+	</delete>
+	<update id="actualizarDocumento">
+		UPDATE Elemento
+		SET Nombre = #{Documento.nombre},
+		FechaCreacion = #{Documento.fechaCreacion},
+		FechaUltimaModificacion =
+		#{Documento.fechaUltimaActualizacion},
+		Publico = #{Documento.publico},
+		Tipo = 1,
+		EstadoDocumento = #{Documento.estado.codigo}
+		WHERE Codigo =
+		#{Documento.codigo}
+	</update>
+
+
+
+	<resultMap id="userResultMap" type="es.fpdual.eadmin.eadmin.modelo.Documento">
+		<constructor>
+			<idArg column="Codigo" javaType="Integer" />
+			<arg column="Nombre" javaType="String" />
+			<arg column="FechaCreacion" javaType="Date" />
+			<arg column="FechaUltimaModificacion" javaType="Date" />
+			<arg column="Publico" javaType="Boolean" />
+			<arg column="EstadoDocumento" javaType="es.fpdual.eadmin.eadmin.modelo.EstadoDocumento" />
+		</constructor>
+	</resultMap>
+
+
+	<select id="buscarDocumento" resultMap="userResultMap">
+		<include refid="selectComunDocumentos" />
+		and Codigo = #{Codigo};
+	</select>
+	<select id="obtenerTodosLosDocumentos" resultMap="userResultMap">
+		<include refid="selectComunDocumentos" />
+	</select>
+	<sql id="selectComunDocumentos">
+		SELECT Codigo, Nombre, FechaCreacion,
+		FechaUltimaModificacion, Publico, EstadoDocumento
+		FROM Elemento
+		WHERE Tipo = 1
+	</sql>
+	<select id="obtenerElMayorCodigoMasUno" resultType="Integer">
+		select ISNULL(max(Codigo), 0)+1
+		from Elemento;
+	</select>
+
+
+
+</mapper>
